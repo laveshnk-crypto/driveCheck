@@ -1,10 +1,14 @@
 {
   "expo": {
+    "packagerOpts": {
+      "sourceExts": ["js","jsx","svgx","svg"],
+      "transformer": "node_modules/react-native-svg-transformer/index.js"
+    },
     "name": "drive-check-ontario",
     "slug": "drive-check-ontario",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/historyLogoWhite.svg",
     "scheme": "drivecheckontario",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

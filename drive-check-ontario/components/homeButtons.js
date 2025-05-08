@@ -1,14 +1,15 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, View, GestureResponderEvent } from "react-native";
+import { TouchableOpacity, Text, StyleSheet, View, Image } from "react-native";
 
 
-export default function HomeButtons({ label, onPress }) {
+export default function HomeButtons({ label, onPress, IconSVG }) {
     return (
         <View style={styles.wrapper}>
-        <View style={styles.shadowLayer} />
-        <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
-            <Text style={styles.text}>{label}</Text>
-        </TouchableOpacity>
+            <View style={styles.shadowLayer} />
+            <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
+                <Text style={styles.text}>{label}</Text>
+                {IconSVG && <IconSVG width={30} height={30} />}
+            </TouchableOpacity>
         </View>
     );
 }
@@ -20,13 +21,14 @@ const styles = StyleSheet.create({
         width: "70%",
     },
     button: {
-        height: 48,
+        height: 60,
         backgroundColor: "#F5E8D8",
         borderColor: "#111",
         borderWidth: 2,
         borderRadius: 8,
         paddingHorizontal: 25,
-        justifyContent: "center",
+        justifyContent: "space-between",
+        flexDirection: "row",
         alignItems: "center",
         position: "relative",
         shadowColor: "#b08f6c", // iOS shadow
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
     text: {
         color: "#111",
         fontSize: 16,
-        fontFamily: "Inter",
+        fontFamily: "System",
         lineHeight: 24,
     },
 });

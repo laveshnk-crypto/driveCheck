@@ -1,7 +1,12 @@
-import { Text, Animated, View, StyleSheet } from "react-native";
+import { Text, Animated, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useEffect } from "react";
 import { fadeInPulse } from "@/animations/fadeInPulse";
 import HomeButtons from "@/components/homeButtons";
+
+import HistoryLogoWhite from "../assets/historyLogoWhite.svg";
+import CameraLogo from "../assets/cameraLogo.svg";
+import HandBookLogo from "../assets/handbookLogo.svg";
+import CoffeeLogo from "../assets/coffeeLogo.svg";
 
 export default function HomeScreen() {
     const {anim, animation} = fadeInPulse(1000);
@@ -12,13 +17,19 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
+            <View style={{ position: "absolute", top: "3%", right: 20, zIndex: 1 }}>
+            <TouchableOpacity onPress={() => console.log("History Pressed!")}>
+                <HistoryLogoWhite width={60} height={45} />
+            </TouchableOpacity>
+            </View>
             <Animated.Image
                 source={require("../assets/logoWhite.png")}
                 style={{ width: 300, height: 300, opacity: anim }}
             />
-            <HomeButtons label="Upload Results" onPress={() => console.log("Pressed!")}/>
-            <HomeButtons label="Driver's handbook" onPress={() => console.log("Pressed!")}/>
-            <HomeButtons label="Donate!" onPress={() => console.log("Pressed!")}/>
+            <HomeButtons IconSVG={CameraLogo} label="Upload Results" onPress={() => console.log("Pressed!")}/>
+            <HomeButtons IconSVG={HandBookLogo} label="Ontario Driver's Handbook" onPress={() => console.log("Pressed!")}/>
+            <HomeButtons IconSVG={CoffeeLogo} label="About" onPress={() => console.log("Pressed!")}/>
+
             <View style={styles.textContainer} >
                 <Text style = {styles.text}>Region: Onatrio</Text>
             </View>
