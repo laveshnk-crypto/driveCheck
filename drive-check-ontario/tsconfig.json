@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "components/homeButtons.js", "animations/fadeInPulse.js"  ]
+, "components/homeButtons.js", "animations/fadeInPulse.js", "app/index.tsx"  ]
 }

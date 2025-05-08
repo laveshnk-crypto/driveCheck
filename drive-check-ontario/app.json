@@ -37,7 +37,16 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "This app accesses your photos to upload your drivetest results."
+        
+        }
+        
       ]
+      
     ],
     "experiments": {
       "typedRoutes": true
