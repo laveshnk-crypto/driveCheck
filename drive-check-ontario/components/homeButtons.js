@@ -1,10 +1,10 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, View, Animated } from "react-native";
 import { useEffect } from "react";
-import { fadeInPulse } from "@/animations/fadeInPulse";
+import { fadeIn } from "@/animations/fadeIn";
 
 export default function HomeButtons({ label, onPress, IconSVG }) {
-    const {anim, animation} = fadeInPulse(1000);
+    const {anim, animation} = fadeIn(1000);
 
     useEffect(() => {
         animation.start();

@@ -1,6 +1,6 @@
 import { Animated } from "react-native";
 
-export function fadeInPulse(duration = 1000) {
+export function fadeIn(duration = 1000) {
     const anim = new Animated.Value(0);
     const animation = Animated.timing(anim, {
         toValue: 1,

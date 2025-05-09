@@ -1,6 +1,8 @@
-import { Text, Animated, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { TextInput, Text, Animated, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
-import { fadeInPulse } from "@/animations/fadeInPulse";
+import { fadeInPulseLogo } from "@/animations/fadeInPulseLogo";
+import { useRouter } from "expo-router";
+
 import HomeButtons from "@/components/homeButtons";
 import * as ImagePicker from "expo-image-picker";
 //import {convertToBase64} from "@/utils/imageUtils"; 
@@ -11,9 +13,10 @@ import HandBookLogo from "../assets/handbookLogo.svg";
 import CoffeeLogo from "../assets/coffeeLogo.svg";
 
 export default function HomeScreen() {
-    const {anim, animation} = fadeInPulse(1000); // Animation hook for fade in
+    const {anim, animation} = fadeInPulseLogo(1100); // Animation hook for fade in
     const [image, setImage] = useState<string | null>(null); // State to hold the image
-
+    const router = useRouter();
+    
     const processImage = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
@@ -65,25 +68,22 @@ export default function HomeScreen() {
     return (
         <View style={styles.container}>
             <View style={{ position: "absolute", top: "3%", right: 20, zIndex: 1 }}>
-            <Animated.View style={{ opacity: anim }}>
                 <TouchableOpacity onPress={() => console.log("History Pressed!")}>
                     <HistoryLogoWhite width={60} height={45} />
                 </TouchableOpacity>
-            </Animated.View>
             </View>
             <Animated.Image
                 source={require("../assets/logoWhite.png")}
                 style={{ width: 300, height: 300, opacity: anim }}
             />
+            <TextInput style={styles.textInput} placeholder= "(Optional) Enter context" placeholderTextColor={"#87827b"}></TextInput>
             <HomeButtons IconSVG={CameraLogo} label="Upload Results" onPress={processImage}/>
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }}/>}
             
-            {/* <HomeButtons IconSVG={HandBookLogo} label="Ontario Driver's Handbook" onPress={sendToBackend}/> */}
-            <HomeButtons IconSVG={CoffeeLogo} label="About" onPress={() => console.log("Pressed!")}/>
+            <HomeButtons IconSVG={HandBookLogo} label="Ontario Driver's Handbook" onPress={() => console.log("Handbook Pressed!")}/>
+            <HomeButtons IconSVG={CoffeeLogo} label="Tutorial" onPress={() => console.log("Pressed!")}/>
                 <View style={styles.textContainer} >
-                    <Animated.View style={{ opacity: anim }}>
                         <Text style = {styles.text}>Region: Onatrio</Text>
-                    </Animated.View>
                 </View>
 
         </View>
@@ -107,5 +107,18 @@ const styles = StyleSheet.create({
     text:{
         color: "#F5E8D8",
         fontSize: 15
+    },
+    textInput:{
+        width: "60%",
+        borderRadius: 30,
+        borderWidth: 4,
+        borderColor: "#F5E8D8",
+        height: 50,
+        color: "#F5E8D8",
+        fontFamily: "System",
+        fontSize: 20,
+        paddingHorizontal: 20,
+        justifyContent: "center",
+
     }
 });
