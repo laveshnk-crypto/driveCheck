@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { fadeInPulse } from "@/animations/fadeInPulse";
 import HomeButtons from "@/components/homeButtons";
 import * as ImagePicker from "expo-image-picker";
-import {convertToBase64} from "@/utils/imageUtils"; 
+//import {convertToBase64} from "@/utils/imageUtils"; 
 
 import HistoryLogoWhite from "../assets/historyLogoWhite.svg";
 import CameraLogo from "../assets/cameraLogo.svg";
@@ -22,23 +22,36 @@ export default function HomeScreen() {
             quality: 1,
         });
 
+
         if(!result.canceled && result.assets.length > 0) {
-            const uri = result.assets[0].uri;
+            const asset = result.assets[0];
+            const uri = asset.uri;
+
+            const filename = uri.split("/").pop() || "image.jpg";
+            const match = /\.(\w+)$/.exec(filename || "");
+            const type = match ? `image/${match[1]}` : `image`;
+
+            const formData = new FormData();
+            formData.append("file", {
+                uri,
+                name: filename,
+                type,
+            } as any);
 
             try{
-                const base64 = await convertToBase64(uri); 
-                const response = await fetch("http://localhost:3001/upload",{
+                const response = await fetch("http://192.168.2.114:3001/upload",{
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
+                    // 'Content-Type' should NOT be set manually for FormData in fetch
+                    // Let fetch set it automatically including boundary
                     },
-                    body: JSON.stringify({image: base64})
+                    body: formData
                     });
                     
                     const data = await response.json();
-                    console.log("Backend response: ", data)
+                    console.log("Backend response: ", data);
+                    setImage(uri);
 
-                    setImage(uri); // Optional: update preview
             } catch (error) {
                 console.error("Error uploading image: ", error);
             }
@@ -63,7 +76,7 @@ export default function HomeScreen() {
                 style={{ width: 300, height: 300, opacity: anim }}
             />
             <HomeButtons IconSVG={CameraLogo} label="Upload Results" onPress={processImage}/>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }}/>} {/* Just for preview */}
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }}/>}
             
             {/* <HomeButtons IconSVG={HandBookLogo} label="Ontario Driver's Handbook" onPress={sendToBackend}/> */}
             <HomeButtons IconSVG={CoffeeLogo} label="About" onPress={() => console.log("Pressed!")}/>
