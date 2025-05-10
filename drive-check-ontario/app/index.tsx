@@ -12,16 +12,19 @@ import CameraLogo from "../assets/cameraLogo.svg";
 import HandBookLogo from "../assets/handbookLogo.svg";
 import CoffeeLogo from "../assets/coffeeLogo.svg";
 
+
 export default function HomeScreen() {
     const {anim, animation} = fadeInPulseLogo(1100); // Animation hook for fade in
     const [image, setImage] = useState<string | null>(null); // State to hold the image
     const router = useRouter();
     
+    const userId = "123"; // TODO: Placeholder for user ID, replace with actual user ID from context or props
+
+
     const processImage = async() => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
-            allowsEditing: true,
-            aspect: [4, 3], // Only applicable for android, iOS will always have a square crop
+            allowsEditing: false,
             quality: 1,
         });
 
@@ -35,14 +38,16 @@ export default function HomeScreen() {
             const type = match ? `image/${match[1]}` : `image`;
 
             const formData = new FormData();
+            formData.append("id", userId); // 👈 required
             formData.append("file", {
-                uri,
-                name: filename,
-                type,
+            uri,
+            name: filename,
+            type,
             } as any);
 
+
             try{
-                const response = await fetch("http://192.168.2.114:3001/upload",{
+                const response = await fetch(`http://192.168.2.114:3001/upload`,{
                     method: "POST",
                     headers: {
                     // 'Content-Type' should NOT be set manually for FormData in fetch
@@ -81,9 +86,9 @@ export default function HomeScreen() {
             {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }}/>}
             
             <HomeButtons IconSVG={HandBookLogo} label="Ontario Driver's Handbook" onPress={() => console.log("Handbook Pressed!")}/>
-            <HomeButtons IconSVG={CoffeeLogo} label="Tutorial" onPress={() => console.log("Pressed!")}/>
+            <HomeButtons IconSVG={CoffeeLogo} label="Tutorial" onPress={() => router.navigate("/tutorial")}/>
                 <View style={styles.textContainer} >
-                        <Text style = {styles.text}>Region: Onatrio</Text>
+                        <Text style = {styles.text}>Region: Ontario</Text>
                 </View>
 
         </View>

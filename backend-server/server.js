@@ -3,73 +3,94 @@ const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-require("dotenv").config(); 
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY, 
+    apiKey: process.env.OPENAI_API_KEY,
     organization: process.env.OPENAI_ORG_ID,
-});
+    });
 
-const upload = multer({ dest: "uploads/" });
+    // Multer storage: folder = uploads/<id>
+    const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const id = req.body?.id || "default";
+        const dir = `uploads/${id}`;
 
-app.get("/", (req, res) => {
+        if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+        }
+
+        cb(null, dir);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    },
+    });
+
+    const upload = multer({ storage });
+
+    app.get("/", (req, res) => {
     res.send("Hello from Node.js backend!");
-});
+    });
 
-app.post("/upload", upload.single("file"), async (req, res) => {
+    // Use .any() so we can access both fields and file
+    app.post("/upload", upload.any(), async (req, res) => {
     try {
-        const file = req.file;
+        const id = req.body?.id || "default";
+        const file = req.files?.find(f => f.fieldname === "file");
+
         if (!file) {
-            return res.status(400).json({ error: "No file uploaded" });
+        return res.status(400).json({ error: "No file uploaded" });
         }
 
         const base64Image = fs.readFileSync(file.path, "base64");
 
-        const prompt = `You are a DriveTest Analyzer bot. Analyze the image and list issues only in this format:
-"Issues found:
-1.
-2.
-..."
+        const prompt = `You are a DriveTest Analyzer bot. Analyze the image and list semi-detailed issues only in this format:
+    "Issues found:
+    1.
+    2.
+    ..."
 
-If the image is not a valid drive test result, respond with: "Wrong image type".`;
+    If the image is not a valid drive test result, respond with: "Wrong image type".`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4.1-mini",
-            messages: [
+        model: "gpt-4.1-mini",
+        messages: [
+            {
+            role: "user",
+            content: [
+                { type: "text", text: prompt },
                 {
-                    role: "user",
-                    content: [
-                        { type: "text", text: prompt },
-                        {
-                            type: "image_url",
-                            image_url: {
-                                url: `data:image/jpeg;base64,${base64Image}`,
-                            },
-                        },
-                    ],
+                type: "image_url",
+                image_url: {
+                    url: `data:image/jpeg;base64,${base64Image}`,
+                },
                 },
             ],
-            max_tokens: 500,
+            },
+        ],
+        max_tokens: 500,
         });
 
         const result = response.choices[0].message.content;
-        console.log("Analysis from OpenAI:", result);
+        
+        console.log(`Analysis from OpenAI for user ${id}:`, result);
 
         return res.status(200).json({
-            message: "Image uploaded and processed successfully",
-            analysis: result,
+        message: "Image uploaded and processed successfully",
+        analysis: result,
+        savedTo: file.path,
         });
     } catch (error) {
         console.error("Error processing image:", error?.response?.data || error.message || error);
         return res.status(500).json({ error: "Failed to process image" });
     }
-});
+    });
 
-app.listen(3001, () => {
+    app.listen(3001, () => {
     console.log("Server is running on port 3001");
-});
-
+    });
