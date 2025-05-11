@@ -3,6 +3,8 @@ const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
+const { log } = require("console");
+const { json } = require("stream/consumers");
 require("dotenv").config();
 
 const app = express();
@@ -48,15 +50,31 @@ const openai = new OpenAI({
         }
 
         const base64Image = fs.readFileSync(file.path, "base64");
+        const context = req.body?.context || "";
+        
+        // construct the prompt that will send the image to OpenAI
+        const prompt = `You are a DriveTest Analyzer bot. Analyze the uploaded drive test image and return a JSON object in this format, where only the issues are in this format:
 
-        const prompt = `You are a DriveTest Analyzer bot. Analyze the image and list semi-detailed issues only in this format:
-    "Issues found:
-    1.
-    2.
-    ..."
+        {
+        "status": "success" | "invalid",
+        "issues": {
+            "IssueTitle": "...",
+            "IssueTitle2": "...",
+            ...
+        },
+        "notes": "Any additional notes here"
+        }
 
-    If the image is not a valid drive test result, respond with: "Wrong image type".`;
+        If the image is not a valid drive test result, respond with:
 
+        {
+        "status": "invalid",
+        "message": "Wrong image type"
+        }
+
+        Optional context: ${context}`;
+
+        
         const response = await openai.chat.completions.create({
         model: "gpt-4.1-mini",
         messages: [
@@ -76,14 +94,30 @@ const openai = new OpenAI({
         max_tokens: 500,
         });
 
+        // image analysis result
         const result = response.choices[0].message.content;
-        
+        let jsonParsedResult
+
+        try {
+            jsonParsedResult = JSON.parse(result);
+        } catch(error) {
+            console.error("Error parsing JSON:", error);
+            return res.status(500).json({ error: "Failed to parse JSON response" });
+        }
+
+        const resultLogPath = `${file.destination}/log.txt`
+        const timestamp = new Date().toISOString();
+        const logEntry = `\n[${timestamp}]\n${result}\n--------------------\n`;
+
+        fs.appendFileSync(resultLogPath, logEntry);
+
         console.log(`Analysis from OpenAI for user ${id}:`, result);
 
         return res.status(200).json({
         message: "Image uploaded and processed successfully",
-        analysis: result,
+        analysis: jsonParsedResult,
         savedTo: file.path,
+        logPath: resultLogPath,
         });
     } catch (error) {
         console.error("Error processing image:", error?.response?.data || error.message || error);

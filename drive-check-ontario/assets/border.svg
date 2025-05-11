@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" >
+    <rect
+        x="2"
+        y="2"
+        width="60%"
+        height="30%"
+        rx="1"
+        ry="12"
+        fill="none"
+        stroke="#a8a29b"
+        stroke-width="2"
+        stroke-dasharray="4,8,12,16"
+        stroke-dashoffset="0"
+        stroke-linecap="square"
+    />
+</svg>
+
+

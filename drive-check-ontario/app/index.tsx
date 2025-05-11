@@ -16,6 +16,9 @@ import CoffeeLogo from "../assets/coffeeLogo.svg";
 export default function HomeScreen() {
     const {anim, animation} = fadeInPulseLogo(1100); // Animation hook for fade in
     const [image, setImage] = useState<string | null>(null); // State to hold the image
+    const [context, setContext] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+
     const router = useRouter();
     
     const userId = "123"; // TODO: Placeholder for user ID, replace with actual user ID from context or props
@@ -38,7 +41,8 @@ export default function HomeScreen() {
             const type = match ? `image/${match[1]}` : `image`;
 
             const formData = new FormData();
-            formData.append("id", userId); // 👈 required
+            formData.append("id", userId);
+            formData.append("context", context);
             formData.append("file", {
             uri,
             name: filename,
@@ -47,6 +51,7 @@ export default function HomeScreen() {
 
 
             try{
+                setIsLoading(true);
                 const response = await fetch(`http://192.168.2.114:3001/upload`,{
                     method: "POST",
                     headers: {
@@ -58,10 +63,14 @@ export default function HomeScreen() {
                     
                     const data = await response.json();
                     console.log("Backend response: ", data);
-                    setImage(uri);
+                    router.push({ pathname: "/analysis", params: { result: JSON.stringify(data.analysis) } });
+
+;
 
             } catch (error) {
                 console.error("Error uploading image: ", error);
+            }  finally {
+                setIsLoading(false);
             }
         }
     };
@@ -72,6 +81,11 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.container}>
+            {isLoading && (
+            <View style={styles.loadingOverlay}>
+                <Text style={styles.loadingText}>Analyzing...</Text>
+            </View>
+            )}
             <View style={{ position: "absolute", top: "3%", right: 20, zIndex: 1 }}>
                 <TouchableOpacity onPress={() => console.log("History Pressed!")}>
                     <HistoryLogoWhite width={60} height={45} />
@@ -81,9 +95,8 @@ export default function HomeScreen() {
                 source={require("../assets/logoWhite.png")}
                 style={{ width: 300, height: 300, opacity: anim }}
             />
-            <TextInput style={styles.textInput} placeholder= "(Optional) Enter context" placeholderTextColor={"#87827b"}></TextInput>
+            <TextInput style={styles.textInput} value={context} onChangeText={setContext} placeholder= "(Optional) Enter context" placeholderTextColor={"#87827b"}></TextInput>
             <HomeButtons IconSVG={CameraLogo} label="Upload Results" onPress={processImage}/>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }}/>}
             
             <HomeButtons IconSVG={HandBookLogo} label="Ontario Driver's Handbook" onPress={() => console.log("Handbook Pressed!")}/>
             <HomeButtons IconSVG={CoffeeLogo} label="Tutorial" onPress={() => router.navigate("/tutorial")}/>
@@ -124,6 +137,21 @@ const styles = StyleSheet.create({
         fontSize: 20,
         paddingHorizontal: 20,
         justifyContent: "center",
-
-    }
+    },
+    loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 99,
+    },
+    loadingText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+    },
 });
