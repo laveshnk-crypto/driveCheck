@@ -13,7 +13,7 @@ A mobile-first AI-powered tool that analyzes Ontario DriveTest score sheets and 
 ---
 <h2>📱 App Screens</h2>
 
-<img src="drive-check-ontario/screenshots/1.png" alt="Home Page" width="200"/> <img src="drive-check-ontario/screenshots/2.png" alt="Load Page" width="200"/> <img src="drive-check-ontario/screenshots/3.png" alt="Analyze1 Page" width="200"/> <img src="drive-check-ontario/screenshots/4.png" alt="Analyze2 Page" width="200"/> <img src="drive-check-ontario/screenshots/5.png" alt="Analyze3 Page" width="200"/>
+<img src="drive-check-ontario/screenshots/1.png" alt="Home Page" width="200"/> <img src="drive-check-ontario/screenshots/3.png" alt="Analyze1 Page" width="200"/> <img src="drive-check-ontario/screenshots/5.png" alt="Analyze3 Page" width="200" />
 
 
 
