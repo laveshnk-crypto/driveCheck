@@ -13,9 +13,9 @@ A mobile-first AI-powered tool that analyzes Ontario DriveTest score sheets and 
 ---
 
 ## 🧑‍💻 Tech stack
-Front End: React native (Optimized for IOS)
-Back End: Node.js
-AI: OpenAI
+Front End: React native (Optimized for IOS) 
+Back End: Node.js 
+AI: OpenAI 
 
 ## 🚀 Getting Started
 ### Prerequisites
