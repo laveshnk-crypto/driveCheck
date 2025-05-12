@@ -96,7 +96,7 @@ export default function HomeScreen() {
                 style={{ width: 300, height: 300, opacity: anim }}
             />
             <TextInput style={styles.textInput} value={context} onChangeText={setContext} placeholder= "(Optional) Enter context" placeholderTextColor={"#87827b"}></TextInput>
-            <HomeButtons IconSVG={CameraLogo} label="Upload Results" onPress={processImage}/>
+            <HomeButtons IconSVG={CameraLogo} label="Upload DriveTest Results" onPress={processImage}/>
             
             <HomeButtons IconSVG={HandBookLogo} label="Ontario Driver's Handbook" onPress={() => console.log("Handbook Pressed!")}/>
             <HomeButtons IconSVG={CoffeeLogo} label="Tutorial" onPress={() => router.navigate("/tutorial")}/>
@@ -128,9 +128,7 @@ const styles = StyleSheet.create({
     },
     textInput:{
         width: "60%",
-        borderRadius: 30,
-        borderWidth: 4,
-        borderColor: "#F5E8D8",
+
         height: 50,
         color: "#F5E8D8",
         fontFamily: "System",
