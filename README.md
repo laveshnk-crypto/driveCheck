@@ -1,6 +1,6 @@
 # Drive-Check
 
-A mobile-first AI-powered tool that analyzes Ontario DriveTest score sheets and provides personalized driving advice — complete with visual issue icons and a chat assistant.
+A mobile-first AI-powered tool that analyzes Ontario DriveTest score sheets and provides personalized driving advice — complete with an AI-powered chat assistant.
 
 
 ## 📸 Features
