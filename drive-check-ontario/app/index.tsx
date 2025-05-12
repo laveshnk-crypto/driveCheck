@@ -86,7 +86,7 @@ export default function HomeScreen() {
                 <Text style={styles.loadingText}>Analyzing...</Text>
             </View>
             )}
-            <View style={{ position: "absolute", top: "3%", right: 20, zIndex: 1 }}>
+            <View style={{ position: "absolute", top: "7%", right: 20, zIndex: 1 }}>
                 <TouchableOpacity onPress={() => console.log("History Pressed!")}>
                     <HistoryLogoWhite width={60} height={45} />
                 </TouchableOpacity>
