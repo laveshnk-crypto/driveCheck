@@ -116,9 +116,6 @@ const openai = new OpenAI({
             return res.status(500).json({ error: "Failed to parse JSON response" });
         }
 
-        // logo call
-
-
 
         const resultLogPath = `${file.destination}/log.txt`
         const timestamp = new Date().toISOString();
@@ -191,6 +188,62 @@ const openai = new OpenAI({
             return res.status(500).json({ error: "Failed to process chat" });
         }
     })
+
+  app.post('/issueLogos', async (req, res) => {
+        try {
+            const issues = req.body?.issues;
+
+            if (!issues || typeof issues !== "object") {
+                return res.status(400).json({ error: "No valid issues provided." });
+            }
+
+            const logoPrompt = `From the following logo options: ${logoOptions.join(", ")} and the following issues: ${Object.keys(issues).join(", ")}, assign each issue a relevant logo. Reply exactly in this JSON format (no commentary or backticks):
+
+    {
+    "issues": {
+        "Issue title": "logo name",
+        "Issue title": "logo name"
+    }
+    }`;
+
+            const logoResponse = await openai.chat.completions.create({
+                model: "gpt-4.1-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: "Only respond with valid JSON in the exact format specified. Do not include markdown or commentary."
+                    },
+                    {
+                        role: "user",
+                        content: [
+                            { type: "text", text: logoPrompt },
+                        ],
+                    },
+                ],
+                max_tokens: 300,
+            });
+
+            const logoResult = logoResponse.choices[0].message.content;
+            console.log("Logo result: ", logoResult);
+
+            let jsonParsedLogoResult;
+            try {
+                jsonParsedLogoResult = JSON.parse(logoResult);
+            } catch (error) {
+                console.error("Error parsing LOGO JSON:", error);
+                return res.status(500).json({ error: "Failed to parse LOGO JSON response" });
+            }
+
+            return res.status(200).json({
+                message: "Logos processed successfully",
+                response: jsonParsedLogoResult,
+            });
+        } catch (error) {
+            console.error("Server error:", error?.response?.data || error.message || error);
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    });
+
 
     app.listen(3001, () => {
     console.log("Server is running on port 3001");
